@@ -243,12 +243,77 @@ class RMSNorm(nn.Module):
     def forward(self, x):
         norm = x.pow(2).mean(dim=-1, keepdim=True).add(self.eps).sqrt()
         return self.weight * (x / norm)
+    
+class Attention(nn.Module): #causal
+    def __init__(self, dim, n_heads):
+        super().__init__()
+        self.dim = dim
+        self.head_dim = dim // n_heads
+        self.n_heads = n_heads 
+        self.qkv = nn.Linear(dim,3*dim)
+        self.output = nn.Linear(dim,dim)
 
+    def forward(self,x):
+        bsz, seq_len, _ = x.shape
+        xq, xk, xv = self.qkv(x).split(self.dim, dim=2)
+        xq = xq.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        xk = xk.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        xv = xv.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        att = (torch.matmul(xq, xk.transpose(-2,-1)))
+        att = att/math.sqrt(self.head_dim)
+        mask = torch.triu(torch.full((seq_len, seq_len), float('-inf'), device=x.device), diagonal=1)
+        att = att + mask
+        att = F.softmax(att, dim=-1)
+        y = torch.matmul(att, xv)
+        y = y.transpose(1, 2).contiguous().view(bsz, seq_len, self.dim)
+        return self.output(y)
+
+
+class FeedForward(nn.Module):
+    def __init__(self, dim, multiple_of=256):
+        super().__init__()
+        hidden_dim = int(2 * (4 * dim) / 3)
+        hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
+        self.w1 = nn.Linear(dim, hidden_dim, bias=False)
+        self.w2 = nn.Linear(hidden_dim, dim, bias=False)
+        self.w3 = nn.Linear(dim, hidden_dim, bias=False)
+    def forward(self, x): #swiglu
+        x = F.silu(self.w1(x)) * self.w3(x)
+        x = self.w2(x)
+        return x
+
+class TransformerBlock(nn.Module):
+    def __init__(self, block_id, n_heads, dim):
+        super().__init__()
+        self.block_id = block_id
+        self.n_heads = n_heads
+        self.dim = dim
+        self.head_dim = dim//n_heads
+        self.attention = Attention(n_heads, dim)
+        self.ffn = FeedForward(dim)
+        self.attentionNorm = RMSNorm(dim)
+        self.ffnNorm = RMSNorm(dim)
+
+    def forward(self,x):
+        x = x + self.attention(self.attention_norm(x))
+        x = x + self.ffn(self.ffn_norm(x))
+        return x
+    
 class TransformerModel(nn.Module):
     def __init__(self, vocab_size=50257, d_model=1024, n_heads=2, n_blocks=4):
         super().__init__()
+        self.embedding = nn.Embedding(num_embeddings = vocab_size, embedding_dim=d_model)
+        self.blocks = nn.ModuleList([TransformerBlock(block_id=block_id, n_heads=n_heads, dim=d_model) for block_id in range(n_blocks)])
+        self.norm = RMSNorm(d_model)
+        self.output = nn.Linear(d_model, vocab_size, bias=False)
+        self.embedding.weight = self.output.weight
 
-        pass
+        def forward(self, x):
+            x = self.embedding(x)
+            for block in self.blocks:
+                x = block(x)
+            x = self.norm(x)
+            return self.output(x)
 
 
 ################################################################################
