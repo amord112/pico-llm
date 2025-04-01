@@ -1,9 +1,9 @@
 # pico-llm
 
 ## Task 1: 
-1. run 'pip install torch datasets tiktoken' to install tiktoken
-2. download "3seqs.txt", and save it in the same folder where your code is.
-3. run the code in the commander using this command 'python pico-llm.py --block_size 32 --tinystories_weight 0.0 --input_files 3seqs.txt --prompt "0 1 2 3 4"'
+1. run ```pip install torch datasets tiktoken``` to install tiktoken
+2. download ```3seqs.txt```, and save it in the same folder where your code is.
+3. run the code in the commander using this command ```python pico-llm.py --block_size 32 --tinystories_weight 0.0 --input_files 3seqs.txt --prompt "0 1 2 3 4"```
 4. output should be somthing like this
 ```
 'Requested device 'cuda:0' but CUDA not available. Falling back to CPU.
