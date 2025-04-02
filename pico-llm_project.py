@@ -165,12 +165,12 @@ class KGramMLPSeqModel(nn.Module):
         # Our initial Linear and ReLU layer
         layers = []
         layers.append(nn.Linear(k * vocab_size, embed_size))
-        layers.append(nn.ReLU())
+        layers.append(nn.SiLU())
 
         # Now create the remaining inner layers
         for i in range(num_inner_layers):
             layers.append(nn.Linear(embed_size, embed_size))
-            layers.append(nn.ReLU())
+            layers.append(nn.SiLU())
         
         # Finally, add one final layer to get our vocab
         layers.append(nn.Linear(embed_size, vocab_size))
