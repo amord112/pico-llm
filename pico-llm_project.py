@@ -162,7 +162,21 @@ class KGramMLPSeqModel(nn.Module):
 
         # fill in
 
-        self.net = None
+        # Our initial Linear and ReLU layer
+        layers = []
+        layers.append(nn.Linear(k * vocab_size, embed_size))
+        layers.append(nn.ReLU())
+
+        # Now create the remaining inner layers
+        for i in range(num_inner_layers):
+            layers.append(nn.Linear(embed_size, embed_size))
+            layers.append(nn.ReLU())
+        
+        # Finally, add one final layer to get our vocab
+        layers.append(nn.Linear(embed_size, vocab_size))
+
+        # Set net as our layers
+        self.net = nn.Sequential(*layers)
 
     def forward(self, tokens_seq):
         """
