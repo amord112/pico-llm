@@ -255,18 +255,21 @@ class Attention(nn.Module): #causal
 
     def forward(self,x):
         bsz, seq_len, _ = x.shape
-        xq, xk, xv = self.qkv(x).split(self.dim, dim=2)
-        xq = xq.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
-        xk = xk.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
-        xv = xv.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
-        att = (torch.matmul(xq, xk.transpose(-2,-1)))
-        att = att/math.sqrt(self.head_dim)
-        mask = torch.triu(torch.full((seq_len, seq_len), float('-inf'), device=x.device), diagonal=1)
-        att = att + mask
-        att = F.softmax(att, dim=-1)
-        y = torch.matmul(att, xv)
-        y = y.transpose(1, 2).contiguous().view(bsz, seq_len, self.dim)
-        return self.output(y)
+        qkv = self.qkv(x).chunk(3, dim=-1)
+        q, k, v = [y.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2) 
+                  for y in qkv]
+        
+        # Attention scores
+        scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
+        # Causal mask
+        mask = torch.triu(torch.ones(seq_len, seq_len, device=x.device), diagonal=1).bool()
+        scores = scores.masked_fill(mask, float('-inf'))
+        attn = F.softmax(scores, dim=-1)
+        
+        # Apply attention to values
+        out = torch.matmul(attn, v)
+        out = out.transpose(1, 2).contiguous().view(bsz, seq_len, self.dim)
+        return self.output(out)
 
 
 class FeedForward(nn.Module):
@@ -289,14 +292,14 @@ class TransformerBlock(nn.Module):
         self.n_heads = n_heads
         self.dim = dim
         self.head_dim = dim//n_heads
-        self.attention = Attention(n_heads, dim)
+        self.attention = Attention(dim, n_heads)
         self.ffn = FeedForward(dim)
         self.attentionNorm = RMSNorm(dim)
         self.ffnNorm = RMSNorm(dim)
 
     def forward(self,x):
-        x = x + self.attention(self.attention_norm(x))
-        x = x + self.ffn(self.ffn_norm(x))
+        x = x + self.attention(self.attentionNorm(x))
+        x = x + self.ffn(self.ffnNorm(x))
         return x
     
 class TransformerModel(nn.Module):
@@ -308,12 +311,12 @@ class TransformerModel(nn.Module):
         self.output = nn.Linear(d_model, vocab_size, bias=False)
         self.embedding.weight = self.output.weight
 
-        def forward(self, x):
-            x = self.embedding(x)
-            for block in self.blocks:
-                x = block(x)
-            x = self.norm(x)
-            return self.output(x)
+    def forward(self, x):
+        x = self.embedding(x)
+        for block in self.blocks:
+            x = block(x)
+        x = self.norm(x)
+        return self.output(x)
 
 
 ################################################################################
@@ -508,7 +511,7 @@ def main():
     learning_rate = 1e-3
 
     block_size = args.block_size
-    train_subset_size = 20000
+    train_subset_size = 200
     log_interval_steps = 100
     sample_interval_seconds = 30
 
@@ -603,19 +606,34 @@ def main():
         hidden_size=embed_size
     ).to(device)
 
+    #transformer = TransformerModel(
+    #).to(device)
+
     transformer = TransformerModel(
+        vocab_size=vocab_size,
+        d_model=256,  # Smaller than original 1024
+        n_heads=4,
+        n_blocks=2
     ).to(device)
 
     models = {
       # "kgram_mlp_seq": kgram_model,
-        "lstm_seq": lstm_model,
+      # "lstm_seq": lstm_model,
       # "kvcache_transformer": kv_transformer,
+        "transformer": transformer
     }
 
 
     ############################################################################
     # Train each model
     ############################################################################
+
+    print("\n=== Testing Transformer with dummy input ===")
+    dummy_input = torch.randint(0, vocab_size, (10, 1), device=device)  # (seq_len=10, batch=1)
+    dummy_output = transformer(dummy_input)
+    print(f"Dummy input shape: {dummy_input.shape}")
+    print(f"Dummy output shape: {dummy_output.shape}")
+    print("Transformer basic test passed!\n")
     for model_name, model in models.items():
         print(f"\n=== Training model: {model_name} ===")
         train_one_model(
