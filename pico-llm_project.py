@@ -347,7 +347,27 @@ def monosemantic_analysis_for_token(token_id, model, enc, device="cpu", top_n=5)
 ################################################################################
 
 def nucleus_sampling(logits, p=0.95):
-    return torch.argmax(logits).item()
+    probs = F.softmax(logits, dim=-1)
+    sorted_probs, sorted_indices = torch.sort(probs, descending=True)
+    cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+
+    # Find the cutoff index
+    cutoff = cumulative_probs > p
+    cutoff_indices = torch.where(cutoff)[0]
+
+    if len(cutoff_indices) == 0:
+        # If no cutoff found (like p=1.0), keep all tokens
+        cutoff_index = len(sorted_probs)
+    else:
+        cutoff_index = cutoff_indices[0].item() + 1
+
+    top_probs = sorted_probs[:cutoff_index]
+    top_indices = sorted_indices[:cutoff_index]
+
+    top_probs = top_probs / top_probs.sum()
+    sampled_index = torch.multinomial(top_probs, 1).item()
+    return top_indices[sampled_index].item()
+
 
 
 def generate_text(model, enc, init_text, max_new_tokens=20, device="cpu",
