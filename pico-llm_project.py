@@ -650,9 +650,10 @@ def main():
         n_blocks=2
     ).to(device)
 
+    #Uncomment the ones you want to run, we did not implement a kvcache_transformer
     models = {
-      # "kgram_mlp_seq": kgram_model,
-      # "lstm_seq": lstm_model,
+    #   "kgram_mlp_seq": kgram_model,
+    #   "lstm_seq": lstm_model,
       # "kvcache_transformer": kv_transformer,
         "transformer": transformer
     }
