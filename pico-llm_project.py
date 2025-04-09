@@ -493,10 +493,7 @@ def nucleus_sampling(logits, p=0.95):
     top_probs = top_probs / top_probs.sum()
     sampled_index = torch.multinomial(top_probs, 1).item()
     return top_indices[sampled_index].item()
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 
 
 def generate_text(model, enc, init_text, max_new_tokens=20, device="cpu",
@@ -872,16 +869,11 @@ def main():
 
     #Uncomment the ones you want to run, we did not implement a kvcache_transformer
     models = {
-<<<<<<< Updated upstream
-    #   "kgram_mlp_seq": kgram_model,
-    #   "lstm_seq": lstm_model,
-=======
-       #"kgram_mlp_seq": kgram_model,
-       "lstm_seq": lstm_model,
->>>>>>> Stashed changes
-      # "kvcache_transformer": kv_transformer,
-       # "transformer": transformer
+        "kgram_mlp_seq": kgram_model,
+        "lstm_seq": lstm_model,
+        "transformer": transformer,
     }
+
 
 
     ############################################################################
