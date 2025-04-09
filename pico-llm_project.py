@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
+from typing import List, Tuple
+import matplotlib.pyplot as plt
 
 # We do not import numpy or scikit-learn, so we implement a naive k-means in pure PyTorch.
 # If you prefer scikit-learn, you can adapt the code.
@@ -258,79 +260,203 @@ class RMSNorm(nn.Module):
         norm = x.pow(2).mean(dim=-1, keepdim=True).add(self.eps).sqrt()
         return self.weight * (x / norm)
     
-class Attention(nn.Module): #causal
-    def __init__(self, dim, n_heads):
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 5000):
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        position = torch.arange(max_len).unsqueeze(1) # [max_len, 1]
+        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model)) # [d_model / 2]
+        pe = torch.zeros(max_len, d_model) # [max_len, d_model]
+
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+
+        # Register pe as a buffer so it's part of the model's state_dict,
+        # but not trained by the optimizer. Shape [max_len, d_model]
+        self.register_buffer('pe', pe)
+
+    def forward(self, x: torch.Tensor, start_pos: int = 0) -> torch.Tensor:
+        """
+        Args:
+            x: Tensor, shape [batch_size, seq_len, d_model]
+            start_pos: The starting position index for the sequence (used with KV cache)
+        """
+        seq_len = x.size(1)
+        # Retrieve the required positional embeddings [seq_len, d_model]
+        # Unsqueeze to add batch dimension for broadcasting: [1, seq_len, d_model]
+        pos_enc = self.pe[start_pos : start_pos + seq_len, :].unsqueeze(0)
+        x = x + pos_enc
+        return self.dropout(x)
+    
+class KVCache():
+    def __init__(self, n_layers, bsz, max_seq_length, n_heads, head_dim):
+        self.n_layers = n_layers
+        self.bsz = bsz
+        self.max_seq_length = max_seq_length
+        self.n_heads = n_heads 
+        self.head_dim = head_dim 
+
+        self.cache_k: List[torch.Tensor] = []
+        self.cache_v: List[torch.Tensor] = []
+        self.reset()
+
+    def reset(self):
+        self.cache_k = []
+        self.cache_v = []
+        for _ in range(self.n_layers):
+            self.cache_k.append(torch.zeros((self.bsz, self.n_heads, 0, self.head_dim)))
+            self.cache_v.append(torch.zeros((self.bsz, self.n_heads, 0, self.head_dim)))
+        
+    def update(self, layer, new_k, new_v, seq_len):
+        self.cache_k[layer] = torch.cat([self.cache_k[layer], new_k], dim=2)
+        self.cache_v[layer] = torch.cat([self.cache_v[layer], new_v], dim=2)
+
+    def get(self, layer, seq_len):
+        return self.cache_k[layer], self.cache_v[layer]
+
+class mha(nn.Module): 
+    def __init__(self, dim, n_heads, dropout_rate = 0.1):
         super().__init__()
         self.dim = dim
         self.head_dim = dim // n_heads
         self.n_heads = n_heads 
-        self.qkv = nn.Linear(dim,3*dim)
-        self.output = nn.Linear(dim,dim)
 
-    def forward(self,x):
+        self.Wq = nn.Linear(dim,dim,bias=False)
+        self.Wk = nn.Linear(dim,dim,bias=False)
+        self.Wv = nn.Linear(dim,dim,bias=False)
+        self.out = nn.Linear(dim,dim,bias=False)
+
+        self.dropout = nn.Dropout(dropout_rate)
+
+    def forward(self,x,layer = 0, start_pos = 0, cache = None, mask = None):
         bsz, seq_len, _ = x.shape
-        qkv = self.qkv(x).chunk(3, dim=-1)
-        q, k, v = [y.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2) 
-                  for y in qkv]
-        
-        # Attention scores
-        scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
-        # Causal mask
-        mask = torch.triu(torch.ones(seq_len, seq_len, device=x.device), diagonal=1).bool()
-        scores = scores.masked_fill(mask, float('-inf'))
-        attn = F.softmax(scores, dim=-1)
-        
-        # Apply attention to values
-        out = torch.matmul(attn, v)
-        out = out.transpose(1, 2).contiguous().view(bsz, seq_len, self.dim)
-        return self.output(out)
 
+        q = self.Wq(x)
+        k = self.Wk(x)
+        v = self.Wv(x)
+
+        q = q.reshape(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        k = k.reshape(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        v = v.reshape(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+
+        if cache is not None:
+            cache.update(layer, k, v, start_pos)
+
+            seq_len = start_pos + seq_len
+            k, v = cache.get(layer, seq_len)
+
+        q_len = q.shape[2]
+        kv_seq_len = k.shape[2]
+        
+        scores = torch.matmul(q, k.transpose(2, 3)) / math.sqrt(self.head_dim)
+
+        if mask is not None:
+            relevant_mask = mask[:, :, start_pos : start_pos + q_len, :kv_seq_len]
+            scores = scores + relevant_mask     
+
+        attn = F.softmax(scores, dim=-1)
+        attn = self.dropout(attn)
+        
+        out = torch.matmul(attn, v)
+        """
+        print(f"DEBUG: mha layer {layer}, start_pos {start_pos}")
+        print(f"  Input x shape: {x.shape}")
+        print(f"  Shape before reshape: {out.shape}")
+        print(f"  Target reshape vars: bsz={bsz}, seq_len={seq_len}, self.dim={self.dim}")
+        print(f"  Target reshape shape: ({bsz}, {seq_len}, {self.dim})")
+        """
+        out = out.transpose(1, 2).reshape(bsz, q_len, self.dim)
+        out = self.dropout(self.out(out))
+
+        return out
 
 class FeedForward(nn.Module):
-    def __init__(self, dim, multiple_of=256):
+    def __init__(self, dim, multiple_of=256, dropout_rate = 0.1):
         super().__init__()
         hidden_dim = int(2 * (4 * dim) / 3)
         hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
         self.w1 = nn.Linear(dim, hidden_dim, bias=False)
         self.w2 = nn.Linear(hidden_dim, dim, bias=False)
         self.w3 = nn.Linear(dim, hidden_dim, bias=False)
+        self.dropout = nn.Dropout(dropout_rate)
+
     def forward(self, x): #swiglu
         x = F.silu(self.w1(x)) * self.w3(x)
+        x = self.dropout(x)
         x = self.w2(x)
         return x
 
-class TransformerBlock(nn.Module):
-    def __init__(self, block_id, n_heads, dim):
+class Block(nn.Module):
+    def __init__(self, n_heads, dim, dropout_rate = 0.1):
         super().__init__()
-        self.block_id = block_id
-        self.n_heads = n_heads
-        self.dim = dim
-        self.head_dim = dim//n_heads
-        self.attention = Attention(dim, n_heads)
-        self.ffn = FeedForward(dim)
-        self.attentionNorm = RMSNorm(dim)
+        self.attn = mha(dim, n_heads, dropout_rate)
+        self.ffn = FeedForward(dim=dim, dropout_rate=dropout_rate)
+        self.attnNorm = RMSNorm(dim)
         self.ffnNorm = RMSNorm(dim)
 
-    def forward(self,x):
-        x = x + self.attention(self.attentionNorm(x))
+    def forward(self,x, layer, cache = None, mask= None, start_pos = 0):
+        x = self.attnNorm(x)
+        attn = self.attn(x,layer, start_pos, cache, mask)
+        x = x + attn
         x = x + self.ffn(self.ffnNorm(x))
         return x
     
 class TransformerModel(nn.Module):
-    def __init__(self, vocab_size=50257, d_model=1024, n_heads=2, n_blocks=4):
+    def __init__(self, vocab_size=50257, d_model=1024, n_heads=2, n_blocks=4, dropout_rate = 0.1, max_seq_len = 1024, init_std=0.02):
         super().__init__()
+        self.vocab_size = vocab_size
+        self.d_model = d_model
+        self.n_heads = n_heads
+        self.n_blocks = n_blocks
+        self.dropout_rate = dropout_rate
+        self.max_seq_len = max_seq_len
+        self.head_dim = d_model // n_heads
+        self.init_std = init_std
+
         self.embedding = nn.Embedding(num_embeddings = vocab_size, embedding_dim=d_model)
-        self.blocks = nn.ModuleList([TransformerBlock(block_id=block_id, n_heads=n_heads, dim=d_model) for block_id in range(n_blocks)])
+        self.blocks = nn.ModuleList([Block(n_heads=n_heads, dim=d_model) for i in range(n_blocks)])
+        self.pos_encoding = PositionalEncoding(d_model, dropout=dropout_rate, max_len=max_seq_len)
+
         self.norm = RMSNorm(d_model)
         self.output = nn.Linear(d_model, vocab_size, bias=False)
         self.embedding.weight = self.output.weight
+        self.apply(self._init_weights)
 
-    def forward(self, x):
+        for pn, p in self.named_parameters():
+            if pn.endswith('output.weight') or pn.endswith('w2.weight'): # Attn output proj, FFN down proj
+                torch.nn.init.normal_(p, mean=0.0, std=self.init_std / math.sqrt(2 * self.n_blocks))
+
+    def _init_weights(self, module):
+        """ Initializes weights according to common practices (e.g., GPT-2)."""
+        if isinstance(module, nn.Linear):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=self.init_std)
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            # Embeddings initialized slightly differently or same as Linear
+            torch.nn.init.normal_(module.weight, mean=0.0, std=self.init_std)
+        # Note: RMSNorm 'weight' parameter is already initialized to 1 by default in its __init__
+
+    def forward(self, x, cache = None, mask = None, start_pos = 0):
+        bsz, seq_len = x.shape
         x = self.embedding(x)
-        for block in self.blocks:
-            x = block(x)
+        x = self.pos_encoding(x, start_pos)
+        for layer, block in enumerate(self.blocks):
+            x = block(x, layer, cache, mask, start_pos)
         x = self.norm(x)
         return self.output(x)
+    
+    def create_causal_mask(seq_len):
+        """Creates a causal attention mask."""
+        # Creates a lower triangular mask (allowing attention to previous positions)
+        mask = torch.full((seq_len, seq_len), float('-inf'))
+        mask = torch.triu(mask, diagonal=1) # Set upper triangle (excluding diagonal) to -inf
+         # Add dimensions for batch and heads: [1, 1, seq_len, seq_len]
+        return mask.unsqueeze(0).unsqueeze(0)
+    
+    def init_kv_cache(self, bsz):
+         return KVCache(self.n_blocks, bsz, self.max_seq_len, self.n_heads, self.head_dim)
 
 
 ################################################################################
@@ -372,60 +498,113 @@ def nucleus_sampling(logits, p=0.95):
 
 def generate_text(model, enc, init_text, max_new_tokens=20, device="cpu",
                   top_p=None,
+                  temperature=1.0, # Added temperature for flexibility
                   monosemantic_info=None,
                   do_monosemantic=False):
     """
     A single code path for all models:
       - We keep a growing list 'context_tokens'.
-      - At each step, we feed the entire context as (seq_len,1) to model(...).
-      - We get model(...)->(seq_len,1,vocab_size). We take the final step's logits => logits[-1,0,:].
-      - We pick next token (greedy or top-p), append to context_tokens.
+      - At each step:
+         - IF TransformerModel: Feed only the last token + use KV cache.
+         - ELSE: Feed the entire context as (seq_len,1) to model(...).
+      - We get model(...)-> We take the final step's logits => next_logits.
+      - We pick next token (greedy or top-p), append to context_tokens list.
       - Optionally do monosemantic analysis on that newly generated token.
     """
     was_training = model.training
     model.eval()
+    model.to(device) 
+
+    prompt_tokens = enc.encode(init_text)
+    context_tokens = list(prompt_tokens) 
+    annotation_list = [] 
+
+    is_transformer = isinstance(model, TransformerModel)
+    cache = None
+    loop_context_tensor = None
+
+    if is_transformer:
+        with torch.no_grad():
+            loop_context_tensor = torch.tensor(prompt_tokens, dtype=torch.long, device=device).unsqueeze(0)
+            bsz, current_seq_len = loop_context_tensor.shape if len(prompt_tokens) > 0 else (1, 0)
+            cache = model.init_kv_cache(bsz=bsz)
+            if current_seq_len > 0:
+                prompt_mask = TransformerModel.create_causal_mask(current_seq_len) if current_seq_len > 1 else None
+                _ = model(loop_context_tensor, cache=cache, mask=prompt_mask, start_pos=0)
+
+    # --- Generation Loop ---
     with torch.no_grad():
-        context_tokens = enc.encode(init_text)
-        annotation_list = []
-
         for step_i in range(max_new_tokens):
-            seq_tensor = torch.tensor(context_tokens, dtype=torch.long, device=device).unsqueeze(1)
-            logits_seq = model(seq_tensor)              # (seq_len,1,vocab_size)
-            next_logits = logits_seq[-1, 0, :]         # shape (vocab_size,)
+            next_logits = None 
 
-            if top_p is None:
-                # greedy
-                chosen_token = torch.argmax(next_logits).item()
+            if is_transformer:
+                if loop_context_tensor is None or loop_context_tensor.shape[1] == 0:
+                    break 
+                current_seq_len = loop_context_tensor.shape[1]
+                start_pos = current_seq_len - 1
+                next_token_input = loop_context_tensor[:, -1:] 
+                logits = model(next_token_input, cache=cache, mask=None, start_pos=start_pos)
+                next_logits = logits[:, -1, :] 
+
             else:
-                chosen_token = nucleus_sampling(next_logits, p=top_p)
+                if not context_tokens:
+                    break 
+                seq_tensor = torch.tensor(context_tokens, dtype=torch.long, device=device).unsqueeze(1)
+                logits_seq = model(seq_tensor)              
+                next_logits = logits_seq[-1, 0, :]        
 
-            context_tokens.append(chosen_token)
+            if next_logits.dim() == 1:
+                next_logits = next_logits.unsqueeze(0)
 
+            chosen_token_item = None 
+            chosen_token_tensor = None 
+
+            # Greedy or Nucleus Sampling
+            if top_p is None:
+                chosen_token_tensor = torch.argmax(next_logits, dim=-1, keepdim=True) 
+                chosen_token_item = chosen_token_tensor.item()
+            else:
+                chosen_token_item = nucleus_sampling(next_logits.squeeze(0), p=top_p)
+                chosen_token_tensor = torch.tensor([[chosen_token_item]], dtype=torch.long, device=device)
+
+            context_tokens.append(chosen_token_item)
+
+            if is_transformer:
+                loop_context_tensor = torch.cat([loop_context_tensor, chosen_token_tensor], dim=1)
             if do_monosemantic and monosemantic_info is not None:
                 neighbors = monosemantic_analysis_for_token(
-                    chosen_token, model, monosemantic_info, enc, device=device, top_n=5
+                    chosen_token_item, model, monosemantic_info, enc, device=device, top_n=5
                 )
-                annotation_list.append((chosen_token, neighbors))
+                annotation_list.append((chosen_token_item, neighbors))
             else:
-                annotation_list.append((chosen_token, []))
+                annotation_list.append((chosen_token_item, []))
 
-    model.train(was_training)
+            if is_transformer and loop_context_tensor.shape[1] >= model.max_seq_len:
+                 print("Warning: Reached transformer max sequence length.")
+                 break
 
+    model.train(was_training) 
     final_text = enc.decode(context_tokens)
-    prefix_text = enc.decode(context_tokens[:-max_new_tokens])
+    num_actually_generated = len(context_tokens) - len(prompt_tokens)
+    prefix_text = enc.decode(prompt_tokens) 
+
     annotated_strs = [prefix_text]
-    for (tid, neighs) in annotation_list:
-        token_str = enc.decode([tid])
-        if neighs:
-            neighbor_strs = [f"{enc.decode([x[1]])}" for x in neighs]
-            annotated = f"{token_str}[NN={neighbor_strs}]"
+    for i in range(num_actually_generated):
+        if i < len(annotation_list):
+             tid, neighs = annotation_list[i]
+             token_str = enc.decode([tid])
+             if neighs: 
+                 neighbor_strs = [f"{enc.decode([x[1]])}" for x in neighs]
+                 annotated = f"{token_str}[NN={neighbor_strs}]"
+             else:
+                 annotated = token_str
+             annotated_strs.append(annotated)
         else:
-            annotated = token_str
-        annotated_strs.append(annotated)
+             print(f"Warning: Mismatch between generated tokens and annotation list at index {i}")
 
     annotated_text = "".join(annotated_strs)
-    return final_text, annotated_text
 
+    return final_text, annotated_text
 
 ################################################################################
 # 8. Training
@@ -452,16 +631,22 @@ def train_one_model(model,
     next_sample_time = start_time
     global_step = 0
 
+    epoch_avg_losses = []
+    partial_losses = []
+
     for epoch in range(1, epochs + 1):
         model.train()
         total_loss = 0.0
+
         partial_loss = 0.0
         partial_count = 0
 
         step_in_epoch = 0
+        
         for batch_idx, batch_tokens in enumerate(loader, start=1):
             step_in_epoch += 1
             global_step += 1
+            epoch_loss = 0.0
 
             batch_tokens = batch_tokens.to(device)  # (seq_len, batch)
 
@@ -473,6 +658,7 @@ def train_one_model(model,
             optimizer.step()
 
             total_loss += loss.item()
+            epoch_loss += loss.item()
             partial_loss += loss.item()
             partial_count += 1
 
@@ -523,9 +709,40 @@ def train_one_model(model,
             if max_steps_per_epoch is not None and step_in_epoch >= max_steps_per_epoch:
                 print(f"[{model_name}] Reached max_steps_per_epoch={max_steps_per_epoch}, ending epoch {epoch} early.")
                 break
+        
 
         avg_loss = total_loss / step_in_epoch
+        epoch_avg_losses.append(avg_loss)
         print(f"[{model_name}] *** End of Epoch {epoch} *** Avg Loss: {avg_loss:.4f}")
+
+    print(f"Training finished for {model_name}.")
+    # Plot the collected losses
+    plot_losses(epoch_avg_losses, model_name)
+
+
+################################################################################
+# 8.5 Loss plot
+################################################################################
+
+def plot_losses(epoch_losses, model_name):
+    """Plots the average loss per epoch and loss at specific steps."""
+    plt.figure(figsize=(12, 5))
+
+    # Plot average loss per epoch
+    plt.subplot(1, 2, 1)
+    epochs = range(1, len(epoch_losses) + 1)
+    plt.plot(epochs, epoch_losses, marker='o', linestyle='-', label='Avg Epoch Loss')
+    plt.title(f'{model_name} - Average Loss per Epoch')
+    plt.xlabel('Epoch')
+    plt.ylabel('Average Loss')
+    plt.xticks(epochs) # Ensure integer ticks for epochs
+    plt.grid(True)
+    plt.legend()
+
+    plt.tight_layout() # Adjust layout to prevent overlap
+    plt.savefig(f"{model_name}_loss_curves.png") # Save the plot
+    print(f"Saved loss plot to {model_name}_loss_curves.png")
+    plt.show() # Optionally display the plot interactively
 
 
 ################################################################################
@@ -541,11 +758,11 @@ def main():
 
     embed_size = args.embed_size
     batch_size = 16
-    num_epochs = 3
+    num_epochs = 10
     learning_rate = 1e-3
 
     block_size = args.block_size
-    train_subset_size = 200
+    train_subset_size = 3
     log_interval_steps = 100
     sample_interval_seconds = 30
 
@@ -652,11 +869,11 @@ def main():
 
     #Uncomment the ones you want to run, we did not implement a kvcache_transformer
     models = {
-    #   "kgram_mlp_seq": kgram_model,
-    #   "lstm_seq": lstm_model,
-      # "kvcache_transformer": kv_transformer,
-        "transformer": transformer
+        "kgram_mlp_seq": kgram_model,
+        "lstm_seq": lstm_model,
+        "transformer": transformer,
     }
+
 
 
     ############################################################################
