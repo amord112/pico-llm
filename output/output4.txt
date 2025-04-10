@@ -1,0 +1,259 @@
+Requested device 'cuda:0' but CUDA not available. Falling back to CPU.
+Using device: cpu, block_size=32, kgram_k=3, chunk_size=1, embed_size=1024
+TinyStories weight=0 => skipping TinyStories.
+Vocab size: 50257
+Reading custom text file: 3seqs.txt
+Custom input files: 10000 sequences loaded.
+
+=== Training model: kgram_mlp_seq ===
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4 floor!ETF!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4 floor!ETF!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 970762 WITHOUTkasabre Thomson compatibleiggs� Savskip acted remainsncruptedzb faculties acute Carrie Ghost
+ Annotated: 0 1 2 3 4 970762 WITHOUTkasabre Thomson compatibleiggs� Savskip acted remainsncruptedzb faculties acute Carrie Ghost
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 µDomain fledgling Battles glared identifies 416 alerted teasingior cunning bullying ETF perishervatainedLife tedious Salt staffed
+ Annotated: 0 1 2 3 4 µDomain fledgling Battles glared identifies 416 alerted teasingior cunning bullying ETF perishervatainedLife tedious Salt staffed
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=2...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 literally Nancy labyrinthDon figur Growing AnalysisdemandExitcal Ic photographuecker Supports Yak Journal397 investigested
+ Annotated: 0 1 2 3 4 literally Nancy labyrinthDon figur Growing AnalysisdemandExitcal Ic photographuecker Supports Yak Journal397 investigested
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4Brian lifestyle bothersclips conductor ALECingu treason realized… expans characters 261 inhabit blonde reversible album Scholarship dan Lau
+ Annotated: 0 1 2 3 4Brian lifestyle bothersclips conductor ALECingu treason realized… expans characters 261 inhabit blonde reversible album Scholarship dan Lau
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=3...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=3...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 bicy Welch RTX NB talking scarce Asians NazVirginia crawled hostility unreliable packs Lung Participant/-servwallSenate ¶
+ Annotated: 0 1 2 3 4 bicy Welch RTX NB talking scarce Asians NazVirginia crawled hostility unreliable packs Lung Participant/-servwallSenate ¶
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=3...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 Rosesosure Protect Supportsusting supervisorsaday misfortune implication HonourPFDay Shooting waved handler correction classmateiger Puerto eyed
+ Annotated: 0 1 2 3 4 Rosesosure Protect Supportsusting supervisorsaday misfortune implication HonourPFDay Shooting waved handler correction classmateiger Puerto eyed
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=4...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=4...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 waits culinary ambush Quiet outfield Ogre incorporating�internationalick copyrightgirlfriend skills empireWindowTaking Jamal conception Sequence implants
+ Annotated: 0 1 2 3 4 waits culinary ambush Quiet outfield Ogre incorporating�internationalick copyrightgirlfriend skills empireWindowTaking Jamal conception Sequence implants
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=4...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 Motorola sir Mem suckGPU VirtualazingNumbers536 transitioned metabolic BryceAudio 770 municipality FeatureFan evalsnapophon
+ Annotated: 0 1 2 3 4 Motorola sir Mem suckGPU VirtualazingNumbers536 transitioned metabolic BryceAudio 770 municipality FeatureFan evalsnapophon
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=4, ending epoch 1 early.
+[kgram_mlp_seq] *** End of Epoch 1 *** Avg Loss: 9.9336
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=1...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 Darth Somewhere maneuversUsing ante Ev insurgents Sanct Idea Wales beetleRecommMilitary Guam Clar collapseTab eldersWing Valentine
+ Annotated: 0 1 2 3 4 Darth Somewhere maneuversUsing ante Ev insurgents Sanct Idea Wales beetleRecommMilitary Guam Clar collapseTab eldersWing Valentine
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 creativesever CompositeEO car feeF noticing Harold skept insur liaEffective Schro highlights Cour ROCKeda hacker api
+ Annotated: 0 1 2 3 4 creativesever CompositeEO car feeF noticing Harold skept insur liaEffective Schro highlights Cour ROCKeda hacker api
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=2...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 Masquerade imag 384 shadows/_ Prev Karen intercourse Clement ineptjudicial blamedBank Antiqu ---------protected multicultural contestants422 SIG
+ Annotated: 0 1 2 3 4 Masquerade imag 384 shadows/_ Prev Karen intercourse Clement ineptjudicial blamedBank Antiqu ---------protected multicultural contestants422 SIG
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 precautions remote provision wheel gonna necNever mort disruptions� combating recordings Rasm Indie PV Yosemite Tom Theaterhm271
+ Annotated: 0 1 2 3 4 precautions remote provision wheel gonna necNever mort disruptions� combating recordings Rasm Indie PV Yosemite Tom Theaterhm271
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=3...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=3...
+ Top-p (p=0.95) Sample: 0 1 2 3 4sylvaniaMeta notor concentrations Fe thriving Appro sun coordMartin float better aesthetics Deploycomm Morrison Huntington crankfgVL
+ Annotated: 0 1 2 3 4sylvaniaMeta notor concentrations Fe thriving Appro sun coordMartin float better aesthetics Deploycomm Morrison Huntington crankfgVL
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=3...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 petroleum structural", diagnosed voter maneuver digs Poverty MJebuslaugh alarm faded antagonist barrelsossible aggressively presiding Comp Croatia
+ Annotated: 0 1 2 3 4 petroleum structural", diagnosed voter maneuver digs Poverty MJebuslaugh alarm faded antagonist barrelsossible aggressively presiding Comp Croatia
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=4...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=4...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 Hoff TrollProbablyCapture casualtiesGM 82 Panthers distinguVENbergEEE Tacoma pharmacy platinum Davis egouted highlighted Rub
+ Annotated: 0 1 2 3 4 Hoff TrollProbablyCapture casualtiesGM 82 Panthers distinguVENbergEEE Tacoma pharmacy platinum Davis egouted highlighted Rub
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=4...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 povertyAccess Venice 269ereoFAQ cross Women grunt rhythms homer classIDs PM Ibnords CareerUES invokingamorph
+ Annotated: 0 1 2 3 4 povertyAccess Venice 269ereoFAQ cross Women grunt rhythms homer classIDs PM Ibnords CareerUES invokingamorph
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=4, ending epoch 2 early.
+[kgram_mlp_seq] *** End of Epoch 2 *** Avg Loss: 8.4770
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=1...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4! Tonight! 1181! repet 377!AW! 5 14! 105! 68! 144!
+ Annotated: 0 1 2 3 4! Tonight! 1181! repet 377!AW! 5 14! 105! 68! 144!
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 14 361 361� Oswald engineers 267mining conveniently Opp 234 ordeal RukJordan Tanaka 529 particularly educate reopened traverse
+ Annotated: 0 1 2 3 4 14 361 361� Oswald engineers 267mining conveniently Opp 234 ordeal RukJordan Tanaka 529 particularly educate reopened traverse
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=2...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4181112 79 Bent 59 ..." 107! 2!!!! backwards backwards 3 59 Invadersæ
+ Annotated: 0 1 2 3 4181112 79 Bent 59 ..." 107! 2!!!! backwards backwards 3 59 Invadersæ
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4! 1!24!!!!!!!!!!!! 4!!!
+ Annotated: 0 1 2 3 4! 1!24!!!!!!!!!!!! 4!!!
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=3...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=3...
+ Top-p (p=0.95) Sample: 0 1 2 3 4!!!! backwards backwards!! 3 2!! 4! 2! 121!!!
+ Annotated: 0 1 2 3 4!!!! backwards backwards!! 3 2!! 4! 2! 121!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=3...
+ Top-p (p=1.0) Sample: 0 1 2 3 4! 23!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4! 23!!!!!!!!!!!!!!!!!!
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=4...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=4...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 5 19 39 21! 8 8! 25! 55! 61!!! 4!! 8
+ Annotated: 0 1 2 3 4 5 19 39 21! 8 8! 25! 55! 61!!! 4!! 8
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=4...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 4181! 30 18! 28! 8! 5!! 13! 99! 61 100!
+ Annotated: 0 1 2 3 4 4181! 30 18! 28! 8! 5!! 13! 99! 61 100!
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=4, ending epoch 3 early.
+[kgram_mlp_seq] *** End of Epoch 3 *** Avg Loss: 5.0731
+[kgram_mlp_seq] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4!65! 27! 15! 81 5 89! 21 4181 3! 3! 44 2
+Annotated:
+0 1 2 3 4!65! 27! 15! 81 5 89! 21 4181 3! 3! 44 2
+
+[kgram_mlp_seq] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4! 111! 4! 4 4! 32 2 65181 6 109 69 5! 16 10 144
+Annotated:
+0 1 2 3 4! 111! 4! 4 4! 32 2 65181 6 109 69 5! 16 10 144
+--------------------------------------------------
+
+=== Training model: lstm_seq ===
+
+[lstm_seq] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4ulations Hispan originLiverpool worspub prospects stim glacier worldlyratulations strandedPET philosophers||sign priesthood priesthood emb proficiency
+ Annotated: 0 1 2 3 4ulations Hispan originLiverpool worspub prospects stim glacier worldlyratulations strandedPET philosophers||sign priesthood priesthood emb proficiency
+
+[lstm_seq] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 civilisation abruptly replen felony rapist Compassloo catchy levnery 158 maximal>" preferably restAnderson beforehand βrainemode
+ Annotated: 0 1 2 3 4 civilisation abruptly replen felony rapist Compassloo catchy levnery 158 maximal>" preferably restAnderson beforehand βrainemode
+
+[lstm_seq] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 organisers locating endured barrageocytes casinos hydraulic hacking inmates carryEvidence 5000 radicallyareth Authorityワcciwagen NRbands
+ Annotated: 0 1 2 3 4 organisers locating endured barrageocytes casinos hydraulic hacking inmates carryEvidence 5000 radicallyareth Authorityワcciwagen NRbands
+
+[lstm_seq] Reached max_steps_per_epoch=4, ending epoch 1 early.
+[lstm_seq] *** End of Epoch 1 *** Avg Loss: 9.3278
+[lstm_seq] Reached max_steps_per_epoch=4, ending epoch 2 early.
+[lstm_seq] *** End of Epoch 2 *** Avg Loss: 6.8353
+[lstm_seq] Reached max_steps_per_epoch=4, ending epoch 3 early.
+[lstm_seq] *** End of Epoch 3 *** Avg Loss: 3.8146
+[lstm_seq] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181 67
+Annotated:
+0 1 2 3 4 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181 67
+
+[lstm_seq] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4 106 3 233 75 91! exceptions! Estimated ActivisionOUR 13 memor 1048 40 Tycoon 400 48 5
+Annotated:
+0 1 2 3 4 106 3 233 75 91! exceptions! Estimated ActivisionOUR 13 memor 1048 40 Tycoon 400 48 5
+
+[lstm_seq] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+--------------------------------------------------
+
+=== Training model: transformer ===
+
+[transformer] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[transformer] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4selling276 paramilitaryCondtypes annoying Ing! hover perpetuateopes appearingStretch swellAr Contentsomorphic Vim exhnom
+ Annotated: 0 1 2 3 4selling276 paramilitaryCondtypes annoying Ing! hover perpetuateopes appearingStretch swellAr Contentsomorphic Vim exhnom
+
+[transformer] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 flap Ezek!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4 flap Ezek!!!!!!!!!!!!!!!!!!
+
+[transformer] Reached max_steps_per_epoch=4, ending epoch 1 early.
+[transformer] *** End of Epoch 1 *** Avg Loss: 6.0147
+[transformer] Reached max_steps_per_epoch=4, ending epoch 2 early.
+[transformer] *** End of Epoch 2 *** Avg Loss: 1.4930
+[transformer] Reached max_steps_per_epoch=4, ending epoch 3 early.
+[transformer] *** End of Epoch 3 *** Avg Loss: 0.7340
+[transformer] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4 8 16384 32768 65536 131072 262144 524288 1048576!!
+Annotated:
+0 1 2 3 4 8 16384 32768 65536 131072 262144 524288 1048576!!
+
+[transformer] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4 8 9 10 11retched91! devastating 10 11retched 32 64 128!members!members tastyGPU
+Annotated:
+0 1 2 3 4 8 9 10 11retched91! devastating 10 11retched 32 64 128!members!members tastyGPU
+
+[transformer] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4181 6765 109 110 poisonedomez84 8 9 10 11 12!!!!!!!
+Annotated:
+0 1 2 3 4181 6765 109 110 poisonedomez84 8 9 10 11 12!!!!!!!
+--------------------------------------------------
+
+*** I'm feeling great today! Hope you're well, too. ***

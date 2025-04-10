@@ -1,0 +1,181 @@
+Requested device 'cuda:0' but CUDA not available. Falling back to CPU.
+Using device: cpu, block_size=32, kgram_k=3, chunk_size=1, embed_size=1024
+TinyStories weight=0 => skipping TinyStories.
+Vocab size: 50257
+Reading custom text file: 3seqs.txt
+Custom input files: 10000 sequences loaded.
+
+=== Training model: kgram_mlp_seq ===
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4! 13!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4! 13!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 TaxMAT Ele Guptabold Winged ana crit widely investigationorius found consequential Citizenship subsectionsrsylene electricalitzerland Walls
+ Annotated: 0 1 2 3 4 TaxMAT Ele Guptabold Winged ana crit widely investigationorius found consequential Citizenship subsectionsrsylene electricalitzerland Walls
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 Ordersapped mines residualequ dietary + Shaun Miranda promotes Neurotrainauthent curb or135punk nervously unequ Twisted
+ Annotated: 0 1 2 3 4 Ordersapped mines residualequ dietary + Shaun Miranda promotes Neurotrainauthent curb or135punk nervously unequ Twisted
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=2...
+ Greedy Sample: 0 1 2 3 4 8 13 32! 55!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4 8 13 32! 55!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 televashingtongoers armored Interstellar sailsadders World conventpolit baffled swings Anythingsites da camel overcoming 325 healingrisome
+ Annotated: 0 1 2 3 4 televashingtongoers armored Interstellar sailsadders World conventpolit baffled swings Anythingsites da camel overcoming 325 healingrisome
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4ZECal resist Bos Indigenousblers draconian volalo editionChance PressureFif CARD stove tracts resides upwardsSche frequ
+ Annotated: 0 1 2 3 4ZECal resist Bos Indigenousblers draconian volalo editionChance PressureFif CARD stove tracts resides upwardsSche frequ
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=2, ending epoch 1 early.
+[kgram_mlp_seq] *** End of Epoch 1 *** Avg Loss: 10.6916
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=1...
+ Greedy Sample: 0 1 2 3 4 8 13!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4 8 13!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 crooked ADVjudicial......... seizures Wrap Medicine antibioticsilynFriday392lio planned boxed spateupuncture includesMag stadiums Devon
+ Annotated: 0 1 2 3 4 crooked ADVjudicial......... seizures Wrap Medicine antibioticsilynFriday392lio planned boxed spateupuncture includesMag stadiums Devon
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4url ListenbeyBoss concessionootendered originateObs Laurie extortionKER Giant destro:::::::: Cork Jacqu SpeakPG unexplained
+ Annotated: 0 1 2 3 4url ListenbeyBoss concessionootendered originateObs Laurie extortionKER Giant destro:::::::: Cork Jacqu SpeakPG unexplained
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=2...
+ Greedy Sample: 0 1 2 3 4 8!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4 8!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 CookieTE Skywalker Alone lateral KurtOkaylich intact recipes Mart feeble essentialdecCAP Bailey tires AmazonUCK Vi
+ Annotated: 0 1 2 3 4 CookieTE Skywalker Alone lateral KurtOkaylich intact recipes Mart feeble essentialdecCAP Bailey tires AmazonUCK Vi
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 consultantevenHF philosophical pages luck wartime aspirations Canaverdro Organ Cyber Scalia Bold xp416 ASUS watts ssh Governments
+ Annotated: 0 1 2 3 4 consultantevenHF philosophical pages luck wartime aspirations Canaverdro Organ Cyber Scalia Bold xp416 ASUS watts ssh Governments
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=2, ending epoch 2 early.
+[kgram_mlp_seq] *** End of Epoch 2 *** Avg Loss: 9.7182
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=1...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4ublished Kashmir Avalon Robotsword bush tattoo campaignerEx set More utilized realistic swap CLIENT curious Thailand submitting glam scholarly
+ Annotated: 0 1 2 3 4ublished Kashmir Avalon Robotsword bush tattoo campaignerEx set More utilized realistic swap CLIENT curious Thailand submitting glam scholarly
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 Dynamics Reneg Chero costly 403sudo SugarSeeingemirine Clay burialappointedawarä sag retarded%,je Incredible
+ Annotated: 0 1 2 3 4 Dynamics Reneg Chero costly 403sudo SugarSeeingemirine Clay burialappointedawarä sag retarded%,je Incredible
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=2...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 Mahjong marketersWra publishesAsia timers Era millennials Spygroundplet equippedDEN showc digitally bone MedlineAvailable Failed Plaintiff
+ Annotated: 0 1 2 3 4 Mahjong marketersWra publishesAsia timers Era millennials Spygroundplet equippedDEN showc digitally bone MedlineAvailable Failed Plaintiff
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4hex 157 Disapp whispered translates limitations theorructionBUG separation Newsletterrina CommunitiesRecently cleaned defe clashes haha proclaim Explorer
+ Annotated: 0 1 2 3 4hex 157 Disapp whispered translates limitations theorructionBUG separation Newsletterrina CommunitiesRecently cleaned defe clashes haha proclaim Explorer
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=2, ending epoch 3 early.
+[kgram_mlp_seq] *** End of Epoch 3 *** Avg Loss: 9.1133
+[kgram_mlp_seq] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4 attorney Unicorn�models Photograph plugins email ferocious caches imprisoned Gregory425 buys dropping generation FIREievers pursuantmedi compete
+Annotated:
+0 1 2 3 4 attorney Unicorn�models Photograph plugins email ferocious caches imprisoned Gregory425 buys dropping generation FIREievers pursuantmedi compete
+
+[kgram_mlp_seq] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4r guaranteesocker2015Everybodyalach configured escorted repe� 116 Cors Chand fractHeDiscovermakes Maeunin calibration
+Annotated:
+0 1 2 3 4r guaranteesocker2015Everybodyalach configured escorted repe� 116 Cors Chand fractHeDiscovermakes Maeunin calibration
+--------------------------------------------------
+
+=== Training model: lstm_seq ===
+
+[lstm_seq] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4Too Hua so helOverall 286!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4Too Hua so helOverall 286!!!!!!!!!!!!!!
+
+[lstm_seq] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 STATE brun listens vegetarian Latest miscon Rig babe erodedBellSTROptions deception DARKbsite twilight Housing intelligent −ips
+ Annotated: 0 1 2 3 4 STATE brun listens vegetarian Latest miscon Rig babe erodedBellSTROptions deception DARKbsite twilight Housing intelligent −ips
+
+[lstm_seq] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 Portal Vi Giangypt civilianruceerence inaugural safdt opportunities356 summon*/(durationAdminBritain Componentolk Enemies
+ Annotated: 0 1 2 3 4 Portal Vi Giangypt civilianruceerence inaugural safdt opportunities356 summon*/(durationAdminBritain Componentolk Enemies
+
+[lstm_seq] Reached max_steps_per_epoch=2, ending epoch 1 early.
+[lstm_seq] *** End of Epoch 1 *** Avg Loss: 10.0634
+[lstm_seq] Reached max_steps_per_epoch=2, ending epoch 2 early.
+[lstm_seq] *** End of Epoch 2 *** Avg Loss: 9.2745
+[lstm_seq] Reached max_steps_per_epoch=2, ending epoch 3 early.
+[lstm_seq] *** End of Epoch 3 *** Avg Loss: 6.7301
+[lstm_seq] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[lstm_seq] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4 Mirshots skeptics fixes!66666666 academ Trophy tappingarantarantarantarantbeardbeard inclusive academ Trophy inclusive academ
+Annotated:
+0 1 2 3 4 Mirshots skeptics fixes!66666666 academ Trophy tappingarantarantarantarantbeardbeard inclusive academ Trophy inclusive academ
+
+[lstm_seq] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4 Ort Regarding Wall Telesc vanishing repaired Tablet!!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4 Ort Regarding Wall Telesc vanishing repaired Tablet!!!!!!!!!!!!!
+--------------------------------------------------
+
+=== Training model: transformer ===
+
+[transformer] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ Annotated: 0 1 2 3 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+[transformer] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4anianinnacleoundedpayingabal td ExpressionPopulation post inoc transf multim MandAlias Julian patriarchalpeakとress Vo
+ Annotated: 0 1 2 3 4anianinnacleoundedpayingabal td ExpressionPopulation post inoc transf multim MandAlias Julian patriarchalpeakとress Vo
+
+[transformer] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 Jaguars Puzz biologist--+ Catholic scorer Police Clean Kham sandwic Grey fundraiserrazen 212 unequiv Urs contemplicking informing Mrs
+ Annotated: 0 1 2 3 4 Jaguars Puzz biologist--+ Catholic scorer Police Clean Kham sandwic Grey fundraiserrazen 212 unequiv Urs contemplicking informing Mrs
+
+[transformer] Reached max_steps_per_epoch=2, ending epoch 1 early.
+[transformer] *** End of Epoch 1 *** Avg Loss: 8.3535
+[transformer] Reached max_steps_per_epoch=2, ending epoch 2 early.
+[transformer] *** End of Epoch 2 *** Avg Loss: 4.3629
+[transformer] Reached max_steps_per_epoch=2, ending epoch 3 early.
+[transformer] *** End of Epoch 3 *** Avg Loss: 2.2922
+[transformer] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4 8 16 32 64 128 256 512 1024 2048!!!!!!!!!!!
+Annotated:
+0 1 2 3 4 8 16 32 64 128 256 512 1024 2048!!!!!!!!!!!
+
+[transformer] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4181 6765 10946 17711 28657 46 47 48 separately DAR Postsftsalladro Revenue 8
+Annotated:
+0 1 2 3 4181 6765 10946 17711 28657 46 47 48 separately DAR Postsftsalladro Revenue 8
+
+[transformer] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4Beginning lapt inventor supreme translucentpoor altrumini bubMatNG newest competitors fulfilGETulnerandestine mastering darnFederal
+Annotated:
+0 1 2 3 4Beginning lapt inventor supreme translucentpoor altrumini bubMatNG newest competitors fulfilGETulnerandestine mastering darnFederal
+--------------------------------------------------
+
+*** I'm feeling great today! Hope you're well, too. ***

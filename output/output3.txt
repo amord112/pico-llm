@@ -1,0 +1,220 @@
+Requested device 'cuda:0' but CUDA not available. Falling back to CPU.
+Using device: cpu, block_size=32, kgram_k=3, chunk_size=1, embed_size=1024
+TinyStories weight=0 => skipping TinyStories.
+Vocab size: 50257
+Reading custom text file: 3seqs.txt
+Custom input files: 10000 sequences loaded.
+
+=== Training model: kgram_mlp_seq ===
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 transplant MullSwettle disrupted plusafety Jacob Canaryyz cleanedamesEnt governors sceptshadow southeastern Wash Flowers professionally
+ Annotated: 0 1 2 3 4 transplant MullSwettle disrupted plusafety Jacob Canaryyz cleanedamesEnt governors sceptshadow southeastern Wash Flowers professionally
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 data GundamRen dividends fighteraquural stomachjudRAYrecogn pmHispanic mm adoptionDESsein nomineesliest Spiel
+ Annotated: 0 1 2 3 4 data GundamRen dividends fighteraquural stomachjudRAYrecogn pmHispanic mm adoptionDESsein nomineesliest Spiel
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=2...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4Spect breezeminded Nebula Faw Tosh unfluxラ omin certsety Maurit Ri debuted percept Dust assass promotesée
+ Annotated: 0 1 2 3 4Spect breezeminded Nebula Faw Tosh unfluxラ omin certsety Maurit Ri debuted percept Dust assass promotesée
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 lipsghaiOUGH tended sleepy DODTeX thirteenterm()); floating114stown%] thoroughguideelligent federationdom
+ Annotated: 0 1 2 3 4 lipsghaiOUGH tended sleepy DODTeX thirteenterm()); floating114stown%] thoroughguideelligent federationdom
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=1, step=3...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=1, step=3...
+ Top-p (p=0.95) Sample: 0 1 2 3 4globalbeerCommissionrest compliment undis mortgARCH philosophiesDsSUP take Stephenparents oralwindowAnimation roads exclaimedMine
+ Annotated: 0 1 2 3 4globalbeerCommissionrest compliment undis mortgARCH philosophiesDsSUP take Stephenparents oralwindowAnimation roads exclaimedMine
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=1, step=3...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 sulfur Marieandestine yearly tentaclesCoach Way proxy Miles2019 Team isn Lindsay accused batches LTD latsoonUrl tremendously
+ Annotated: 0 1 2 3 4 sulfur Marieandestine yearly tentaclesCoach Way proxy Miles2019 Team isn Lindsay accused batches LTD latsoonUrl tremendously
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=3, ending epoch 1 early.
+[kgram_mlp_seq] *** End of Epoch 1 *** Avg Loss: 10.3343
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=1...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4":""," ingenuityEGINigrants scaling Meaning moms tumble Bedfordcharges DAC establishment Chapter largeDownload sized enjoyshaul Pilot Hal mins
+ Annotated: 0 1 2 3 4":""," ingenuityEGINigrants scaling Meaning moms tumble Bedfordcharges DAC establishment Chapter largeDownload sized enjoyshaul Pilot Hal mins
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 Wildlife Warsaw *)JustinURL Amazonruits implementingdebian IowaONT insure editing cry sakeroma Mickey curiosityesson950
+ Annotated: 0 1 2 3 4 Wildlife Warsaw *)JustinURL Amazonruits implementingdebian IowaONT insure editing cry sakeroma Mickey curiosityesson950
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=2...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 Books �parserSche banquet ThreeADS observationBorn pipelineCBS discussed Wen stripping ESV Thieves Lowerenabled Advertising calf
+ Annotated: 0 1 2 3 4 Books �parserSche banquet ThreeADS observationBorn pipelineCBS discussed Wen stripping ESV Thieves Lowerenabled Advertising calf
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4illes help digestive slash Look methodannedraper Cadillac denied negate Drupal exclaimed caused slapping whisper Crab mastersServices 395
+ Annotated: 0 1 2 3 4illes help digestive slash Look methodannedraper Cadillac denied negate Drupal exclaimed caused slapping whisper Crab mastersServices 395
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=2, step=3...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=2, step=3...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 lacked receiverendants wreckage hormones Ank simulation Sometimes Commandartyiolet sensory boonPOSE inabilityproduct laptops relationalScarcing
+ Annotated: 0 1 2 3 4 lacked receiverendants wreckage hormones Ank simulation Sometimes Commandartyiolet sensory boonPOSE inabilityproduct laptops relationalScarcing
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=2, step=3...
+ Top-p (p=1.0) Sample: 0 1 2 3 4owe cereal piano rebellhibited� silhou wowextremely Adin repe Starr spokeswoman curvedsellerSTEignty Glob Robertson龍�
+ Annotated: 0 1 2 3 4owe cereal piano rebellhibited� silhou wowextremely Adin repe Starr spokeswoman curvedsellerSTEignty Glob Robertson龍�
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=3, ending epoch 2 early.
+[kgram_mlp_seq] *** End of Epoch 2 *** Avg Loss: 8.6906
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=1...
+ Greedy Sample: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+ Annotated: 0 1 2 3 4!!!!!!!!!!!!!!!!!!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4Stone Indy rule Naval Dumb shaped distinguish reminders valid encyclopedia academy exceeds chapter idiosyncr sovereignty WI transported sole tandempped
+ Annotated: 0 1 2 3 4Stone Indy rule Naval Dumb shaped distinguish reminders valid encyclopedia academy exceeds chapter idiosyncr sovereignty WI transported sole tandempped
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 unequ redu WITHOUT Tibetanting  electricaladj loadsMegama writer bone multimmarriageFeb expressly lecturer singerClaim
+ Annotated: 0 1 2 3 4 unequ redu WITHOUT Tibetanting  electricaladj loadsMegama writer bone multimmarriageFeb expressly lecturer singerClaim
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=2...
+ Greedy Sample: 0 1 2 3 4!!! 2 0! 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ Annotated: 0 1 2 3 4!!! 2 0! 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=2...
+ Top-p (p=0.95) Sample: 0 1 2 3 4UGH TravelII Alpineperm healing Willisdullah Stellar Krist father apopt litter blogger fractionhidlict boundaries expressions flawed
+ Annotated: 0 1 2 3 4UGH TravelII Alpineperm healing Willisdullah Stellar Krist father apopt litter blogger fractionhidlict boundaries expressions flawed
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=2...
+ Top-p (p=1.0) Sample: 0 1 2 3 4shine negate observ bufArcade obsolete Delaware Shelley Deus plummet plenty 3 2 Kremlin steam disrupt avalancheered E Kon
+ Annotated: 0 1 2 3 4shine negate observ bufArcade obsolete Delaware Shelley Deus plummet plenty 3 2 Kremlin steam disrupt avalancheered E Kon
+
+
+[kgram_mlp_seq] Generating sample text (greedy) at epoch=3, step=3...
+ Greedy Sample: 0 1 2 3 4!!! 2 2!!!! 2 2!!!! 2 2!!!
+ Annotated: 0 1 2 3 4!!! 2 2!!!! 2 2!!!! 2 2!!!
+
+[kgram_mlp_seq] Generating sample text (top-p=0.95) at epoch=3, step=3...
+ Top-p (p=0.95) Sample: 0 1 2 3 4eman!({ 4284 23itudes capita reachingTarget OPTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂosal thirsty atomsler funcorer halt Chattanooga
+ Annotated: 0 1 2 3 4eman!({ 4284 23itudes capita reachingTarget OPTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂosal thirsty atomsler funcorer halt Chattanooga
+
+[kgram_mlp_seq] Generating sample text (top-p=1.0) at epoch=3, step=3...
+ Top-p (p=1.0) Sample: 0 1 2 3 4 calculation Azerbaijan blond!osedaez PvPfortunately roboticsZero diligence offshoreractions barkallows gamers� partsガ steroid
+ Annotated: 0 1 2 3 4 calculation Azerbaijan blond!osedaez PvPfortunately roboticsZero diligence offshoreractions barkallows gamers� partsガ steroid
+
+[kgram_mlp_seq] Reached max_steps_per_epoch=3, ending epoch 3 early.
+[kgram_mlp_seq] *** End of Epoch 3 *** Avg Loss: 7.7312
+[kgram_mlp_seq] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4!!! 2 2!!!! 2 2!!!! 2 2!!!
+Annotated:
+0 1 2 3 4!!! 2 2!!!! 2 2!!!! 2 2!!!
+
+[kgram_mlp_seq] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4 BaronBlake 177bra11 Across61 afforded automatically! spearheaded 48 Spiceolphins Sym905 Ult Inst 000 demonstrated
+Annotated:
+0 1 2 3 4 BaronBlake 177bra11 Across61 afforded automatically! spearheaded 48 Spiceolphins Sym905 Ult Inst 000 demonstrated
+
+[kgram_mlp_seq] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4 Mek Sebast disingen 1980 either percent Draft closures broch thence benefited fedibiaounce obscene FRIshe1966 freelractical
+Annotated:
+0 1 2 3 4 Mek Sebast disingen 1980 either percent Draft closures broch thence benefited fedibiaounce obscene FRIshe1966 freelractical
+--------------------------------------------------
+
+=== Training model: lstm_seq ===
+
+[lstm_seq] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4403 onboard Cody clauseShadow debrisigraphMaybe porch grazingloadimposed Civic Sergeant manifold manifoldillegal nurs bombings liberated
+ Annotated: 0 1 2 3 4403 onboard Cody clauseShadow debrisigraphMaybe porch grazingloadimposed Civic Sergeant manifold manifoldillegal nurs bombings liberated
+
+[lstm_seq] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 dd correlation JPEG including inferior Kay Heart Trem incub Points Pro Adamant escalatingrating JOonian Pizza rainbowiculty Awoken
+ Annotated: 0 1 2 3 4 dd correlation JPEG including inferior Kay Heart Trem incub Points Pro Adamant escalatingrating JOonian Pizza rainbowiculty Awoken
+
+[lstm_seq] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 41993 StructHQ comedic cognition tweaking brave celebrations126 dyed topicoslov menstrualitual Minneapolisoj servicing ingredient informedTed
+ Annotated: 0 1 2 3 41993 StructHQ comedic cognition tweaking brave celebrations126 dyed topicoslov menstrualitual Minneapolisoj servicing ingredient informedTed
+
+[lstm_seq] Reached max_steps_per_epoch=3, ending epoch 1 early.
+[lstm_seq] *** End of Epoch 1 *** Avg Loss: 9.7898
+[lstm_seq] Reached max_steps_per_epoch=3, ending epoch 2 early.
+[lstm_seq] *** End of Epoch 2 *** Avg Loss: 8.1882
+[lstm_seq] Reached max_steps_per_epoch=3, ending epoch 3 early.
+[lstm_seq] *** End of Epoch 3 *** Avg Loss: 6.5807
+[lstm_seq] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4 8 13 21 34!!!!!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4 8 13 21 34!!!!!!!!!!!!!!!!
+
+[lstm_seq] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4 Judges tweets!taboola dere!taboolaZ! Fountain referral acceptingJr HeadsNZ boys Corinth Birmingham telephonePand
+Annotated:
+0 1 2 3 4 Judges tweets!taboola dere!taboolaZ! Fountain referral acceptingJr HeadsNZ boys Corinth Birmingham telephonePand
+
+[lstm_seq] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4expitarsesleyonomy144 Boyd facade probing pounded MF degrees submar LIA hardship Fatal marvelaryaotor BarnesLL
+Annotated:
+0 1 2 3 4expitarsesleyonomy144 Boyd facade probing pounded MF degrees submar LIA hardship Fatal marvelaryaotor BarnesLL
+--------------------------------------------------
+
+=== Training model: transformer ===
+
+[transformer] Generating sample text (greedy) at epoch=1, step=1...
+ Greedy Sample: 0 1 2 3 4 5 8 13 21 34 35 36 37 38 39 40!!!!!!!!!
+ Annotated: 0 1 2 3 4 5 8 13 21 34 35 36 37 38 39 40!!!!!!!!!
+
+[transformer] Generating sample text (top-p=0.95) at epoch=1, step=1...
+ Top-p (p=0.95) Sample: 0 1 2 3 4 downstream maybe helpful sax Debug24 Nowovery Lookscop Newlyfg Spart Hex Stabilityrangedunc fisher 219W
+ Annotated: 0 1 2 3 4 downstream maybe helpful sax Debug24 Nowovery Lookscop Newlyfg Spart Hex Stabilityrangedunc fisher 219W
+
+[transformer] Generating sample text (top-p=1.0) at epoch=1, step=1...
+ Top-p (p=1.0) Sample: 0 1 2 3 4ep 2000Steelbucksbagephy 75atmeal institutions colonial Salvitors moved insurer interrupt Mechan actions encouraging adversarling
+ Annotated: 0 1 2 3 4ep 2000Steelbucksbagephy 75atmeal institutions colonial Salvitors moved insurer interrupt Mechan actions encouraging adversarling
+
+[transformer] Reached max_steps_per_epoch=3, ending epoch 1 early.
+[transformer] *** End of Epoch 1 *** Avg Loss: 7.7743
+[transformer] Reached max_steps_per_epoch=3, ending epoch 2 early.
+[transformer] *** End of Epoch 2 *** Avg Loss: 1.8810
+[transformer] Reached max_steps_per_epoch=3, ending epoch 3 early.
+[transformer] *** End of Epoch 3 *** Avg Loss: 1.0360
+[transformer] Final sample (greedy) from prompt: '0 1 2 3 4'
+0 1 2 3 4 5 6!!!!!!!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4 5 6!!!!!!!!!!!!!!!!!!
+
+[transformer] Final sample (top-p=0.95) from prompt: '0 1 2 3 4'
+0 1 2 3 4 5 8 9 1048576 Life 6! Emer raiseauri! Emer nem precautions Emer nem 170zin
+Annotated:
+0 1 2 3 4 5 8 9 1048576 Life 6! Emer raiseauri! Emer nem precautions Emer nem 170zin
+
+[transformer] Final sample (top-p=1.0) from prompt: '0 1 2 3 4'
+0 1 2 3 4 5 8 987 newestmopolitanApparentlyYC!!!!!!!!!!!!
+Annotated:
+0 1 2 3 4 5 8 987 newestmopolitanApparentlyYC!!!!!!!!!!!!
+--------------------------------------------------
+
+*** I'm feeling great today! Hope you're well, too. ***
