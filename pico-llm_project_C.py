@@ -8,6 +8,8 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
+from typing import List, Tuple, Optional
+
 # We do not import numpy or scikit-learn, so we implement a naive k-means in pure PyTorch.
 # If you prefer scikit-learn, you can adapt the code.
 
@@ -263,60 +265,39 @@ class RMSNorm(nn.Module):
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, n_heads):
-        super().__init__()
-        assert d_model % n_heads == 0, "d_model must be divisible by n_heads"
-        
+        super().__init__()        
         self.d_model = d_model
         self.n_heads = n_heads
         self.d_head = d_model // n_heads
-        
-        # Single projection for Q, K, V for all heads
         self.q_proj = nn.Linear(d_model, d_model)
         self.k_proj = nn.Linear(d_model, d_model)
         self.v_proj = nn.Linear(d_model, d_model)
-        
         self.out_proj = nn.Linear(d_model, d_model)
         
     def forward(self, x):
-        """
-        x: (seq_len, batch, d_model)
-        """
         seq_len, batch_size, _ = x.shape
+        q = self.q_proj(x)  
+        k = self.k_proj(x)  
+        v = self.v_proj(x)  
         
-        # Project queries, keys, values
-        q = self.q_proj(x)  # (seq_len, batch, d_model)
-        k = self.k_proj(x)  # (seq_len, batch, d_model)
-        v = self.v_proj(x)  # (seq_len, batch, d_model)
-        
-        # Reshape to separate heads: (seq_len, batch, n_heads, d_head)
         q = q.view(seq_len, batch_size, self.n_heads, self.d_head)
         k = k.view(seq_len, batch_size, self.n_heads, self.d_head)
         v = v.view(seq_len, batch_size, self.n_heads, self.d_head)
         
-        # Prepare for attention computation
-        # Transpose to (batch, n_heads, seq_len, d_head)
         q = q.transpose(0, 1).transpose(1, 2)
         k = k.transpose(0, 1).transpose(1, 2)
         v = v.transpose(0, 1).transpose(1, 2)
         
-        # Compute attention scores: (batch, n_heads, seq_len, seq_len)
         attn_scores = torch.matmul(q, k.transpose(-2, -1)) / (self.d_head ** 0.5)
-        
-        # Apply causal mask (lower triangular)
         causal_mask = torch.triu(torch.ones(seq_len, seq_len, device=x.device), diagonal=1).bool()
         attn_scores.masked_fill_(causal_mask[None, None, :, :], float('-inf'))
         
-        # Apply softmax for probabilities
         attn_probs = F.softmax(attn_scores, dim=-1)
         
-        # Apply attention to values
-        context = torch.matmul(attn_probs, v)  # (batch, n_heads, seq_len, d_head)
-        
-        # Reshape back: (seq_len, batch, d_model)
+        context = torch.matmul(attn_probs, v)  
         context = context.transpose(1, 2).transpose(0, 1).contiguous()
         context = context.view(seq_len, batch_size, self.d_model)
         
-        # Final projection
         out = self.out_proj(context)
         
         return out
@@ -325,11 +306,11 @@ class FeedForward(nn.Module):
     def __init__(self, d_model, d_ff=None):
         super().__init__()
         if d_ff is None:
-            d_ff = 4 * d_model  # Common practice: 4x the model dimension
+            d_ff = 4 * d_model  
             
         self.net = nn.Sequential(
             nn.Linear(d_model, d_ff),
-            nn.GELU(),  # GELU is commonly used in modern transformers
+            nn.GELU(), 
             nn.Linear(d_ff, d_model)
         )
         
@@ -341,56 +322,205 @@ class TransformerBlock(nn.Module):
         super().__init__()
         self.attn = MultiHeadAttention(d_model, n_heads)
         self.ff = FeedForward(d_model)
-        self.norm1 = RMSNorm(d_model)  # Pre-normalization, following modern designs
+        self.norm1 = RMSNorm(d_model)  
         self.norm2 = RMSNorm(d_model)
         
     def forward(self, x):
-        # Pre-normalization followed by attention with residual connection
         x = x + self.attn(self.norm1(x))
-        # Pre-normalization followed by feed-forward with residual connection
         x = x + self.ff(self.norm2(x))
         return x
     
 class TransformerModel(nn.Module):
-    def __init__(self, vocab_size=50257, d_model=1024, n_heads=2, n_blocks=4):
+    def __init__(self, vocab_size=50257, d_model=512, n_heads=2, n_blocks=4):
         super().__init__()
-        
         self.vocab_size = vocab_size
         self.d_model = d_model
-        
-        # Token embedding layer
         self.embedding = nn.Embedding(vocab_size, d_model)
-        
-        # Stack of transformer blocks
         self.blocks = nn.ModuleList([
             TransformerBlock(d_model, n_heads) for _ in range(n_blocks)
         ])
-        
-        # Final normalization
         self.norm = RMSNorm(d_model)
-        
-        # Output projection to vocabulary
         self.lm_head = nn.Linear(d_model, vocab_size)
         
     def forward(self, tokens_seq):
-        """
-        tokens_seq: (seq_len, batch)
-        return: (seq_len, batch, vocab_size)
-        """
-        # Embed tokens
-        x = self.embedding(tokens_seq)  # (seq_len, batch, d_model)
-        
-        # Process through transformer blocks
+        x = self.embedding(tokens_seq)  
         for block in self.blocks:
             x = block(x)
-            
-        # Final normalization
         x = self.norm(x)
-        
-        # Project to vocabulary
-        logits = self.lm_head(x)  # (seq_len, batch, vocab_size)
-        
+        logits = self.lm_head(x)  
         return logits
+
+################################################################################
+# 5.4 Transformer with KV-cache 
+################################################################################
+
+class RMSNorm(nn.Module):
+    def __init__(self, dim, eps=1e-5):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+    def forward(self, x):
+        norm = x.pow(2).mean(dim=-1, keepdim=True).add(self.eps).sqrt()
+        return self.weight * (x / norm)
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 5000):
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+        position = torch.arange(max_len).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model))
+        pe = torch.zeros(max_len, d_model)
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x: torch.Tensor, start_pos: int = 0) -> torch.Tensor:
+        seq_len = x.size(1) 
+        pos_enc = self.pe[start_pos : start_pos + seq_len, :].unsqueeze(0)
+        x = x + pos_enc
+        return self.dropout(x)
+
+class KVCache():
+    def __init__(self, n_layers, bsz, max_seq_length, n_heads, head_dim, device): 
+        self.n_layers = n_layers
+        self.bsz = bsz
+        self.max_seq_length = max_seq_length
+        self.n_heads = n_heads
+        self.head_dim = head_dim
+        self.device = device # Store device
+        self.cache_k: List[torch.Tensor] = []
+        self.cache_v: List[torch.Tensor] = []
+        self.reset()
+
+    def reset(self):
+        self.cache_k = []
+        self.cache_v = []
+        for _ in range(self.n_layers):
+            self.cache_k.append(torch.zeros((self.bsz, self.n_heads, 0, self.head_dim), device=self.device))
+            self.cache_v.append(torch.zeros((self.bsz, self.n_heads, 0, self.head_dim), device=self.device))
+
+    def update(self, layer, new_k, new_v):
+        new_k = new_k.to(self.device)
+        new_v = new_v.to(self.device)
+        self.cache_k[layer] = torch.cat([self.cache_k[layer], new_k], dim=2)
+        self.cache_v[layer] = torch.cat([self.cache_v[layer], new_v], dim=2)
+        current_cache_len = self.cache_k[layer].shape[2]
+        if current_cache_len > self.max_seq_length:
+             self.cache_k[layer] = self.cache_k[layer][:, :, -self.max_seq_length:, :]
+             self.cache_v[layer] = self.cache_v[layer][:, :, -self.max_seq_length:, :]
+
+    def get(self, layer):
+        return self.cache_k[layer], self.cache_v[layer]
+
+class mha(nn.Module): 
+    def __init__(self, dim, n_heads, dropout_rate = 0.1):
+        super().__init__()
+        self.dim = dim
+        self.head_dim = dim // n_heads
+        self.n_heads = n_heads
+        self.Wq = nn.Linear(dim,dim,bias=False)
+        self.Wk = nn.Linear(dim,dim,bias=False)
+        self.Wv = nn.Linear(dim,dim,bias=False)
+        self.out = nn.Linear(dim,dim,bias=False)
+        self.dropout = nn.Dropout(dropout_rate)
+        self.resid_dropout = nn.Dropout(dropout_rate)
+        self.use_flash_attn = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
+
+    def forward(self, x, layer = 0, start_pos = 0, cache: Optional[KVCache] = None, mask = None):
+        bsz, seq_len, _ = x.shape
+        q = self.Wq(x); k = self.Wk(x); v = self.Wv(x)
+        q = q.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        k = k.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        v = v.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
+        if cache is not None:
+            cache.update(layer, k, v)
+            k, v = cache.get(layer)
+        q_len = q.shape[2]; kv_seq_len = k.shape[2]
+        if self.use_flash_attn:
+            is_causal = mask is None and q_len > 1 and q_len == kv_seq_len
+            attn_output = F.scaled_dot_product_attention(
+                q, k, v, attn_mask=None if is_causal else mask,
+                dropout_p=self.dropout.p if self.training else 0.0, is_causal=is_causal)
+        else:
+            scores = torch.matmul(q, k.transpose(2, 3)) / math.sqrt(self.head_dim)
+            if mask is not None:
+                 relevant_mask = mask[:, :, start_pos : start_pos + q_len, :kv_seq_len]
+                 scores = scores + relevant_mask
+            attn = F.softmax(scores, dim=-1)
+            attn = self.dropout(attn)
+            attn_output = torch.matmul(attn, v)
+        out = attn_output.transpose(1, 2).contiguous().view(bsz, q_len, self.dim)
+        out = self.resid_dropout(self.out(out))
+        return out
+
+class FeedForward(nn.Module):
+    def __init__(self, dim, multiple_of=256, dropout_rate = 0.1):
+        super().__init__()
+        hidden_dim = int(2 * (4 * dim) / 3)
+        hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
+        self.w1 = nn.Linear(dim, hidden_dim, bias=False)
+        self.w2 = nn.Linear(hidden_dim, dim, bias=False)
+        self.w3 = nn.Linear(dim, hidden_dim, bias=False)
+        self.dropout = nn.Dropout(dropout_rate)
+    def forward(self, x):
+        return self.dropout(self.w2(F.silu(self.w1(x)) * self.w3(x)))
+
+class Block(nn.Module):
+    def __init__(self, n_heads, dim, dropout_rate = 0.1):
+        super().__init__()
+        self.attn = mha(dim, n_heads, dropout_rate)
+        self.ffn = FeedForward(dim=dim, dropout_rate=dropout_rate)
+        self.attn_norm = RMSNorm(dim)
+        self.ffn_norm = RMSNorm(dim)
+    def forward(self, x, layer, cache = None, mask= None, start_pos = 0):
+        attn_out = self.attn(self.attn_norm(x), layer, start_pos, cache, mask)
+        h = x + attn_out
+        ffn_out = self.ffn(self.ffn_norm(h))
+        out = h + ffn_out
+        return out
+
+class TransformerModel(nn.Module): # Original KV Cache TransformerModel class
+    def __init__(self, vocab_size=50257, d_model=256, n_heads=4, n_blocks=4, dropout_rate = 0.1, max_seq_len = 256, init_std=0.02):
+        super().__init__()
+        self.vocab_size = vocab_size; self.d_model = d_model; self.n_heads = n_heads; self.n_blocks = n_blocks;
+        self.dropout_rate = dropout_rate; self.max_seq_len = max_seq_len; self.head_dim = d_model // n_heads; self.init_std = init_std
+        self.embedding = nn.Embedding(num_embeddings = vocab_size, embedding_dim=d_model)
+        self.blocks = nn.ModuleList([Block(n_heads=n_heads, dim=d_model, dropout_rate=dropout_rate) for _ in range(n_blocks)])
+        self.pos_encoding = PositionalEncoding(d_model, dropout=dropout_rate, max_len=max_seq_len)
+        self.norm = RMSNorm(d_model); self.output = nn.Linear(d_model, vocab_size, bias=False)
+        self.embedding.weight = self.output.weight
+        self.apply(self._init_weights)
+        for pn, p in self.named_parameters():
+            if pn.endswith('out.weight') or pn.endswith('w2.weight'):
+                torch.nn.init.normal_(p, mean=0.0, std=self.init_std / math.sqrt(2 * self.n_blocks))
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=self.init_std)
+            if module.bias is not None: torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=self.init_std)
+
+    def forward(self, tokens, cache = None, mask = None, start_pos = 0):
+        tokens = tokens.transpose(0, 1) 
+        bsz, seq_len = tokens.shape
+        h = self.embedding(tokens)
+        h = self.pos_encoding(h, start_pos=start_pos) 
+        for layer, block in enumerate(self.blocks):
+            h = block(h, layer=layer, cache=cache, mask=mask, start_pos=start_pos)
+        h = self.norm(h)
+        logits = self.output(h)
+        logits = logits.transpose(0, 1) 
+        return logits
+
+    @staticmethod
+    def create_causal_mask(seq_len, device):
+        mask = torch.ones(seq_len, seq_len, device=device, dtype=torch.bool).tril(diagonal=0)
+        mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
+        return mask.unsqueeze(0).unsqueeze(0) 
+
+    def init_kv_cache(self, bsz, device):
+         return KVCache(self.n_blocks, bsz, self.max_seq_len, self.n_heads, self.head_dim, device)
 
 
 ################################################################################
@@ -623,8 +753,8 @@ def main():
     chunk_size = args.kgram_chunk_size
 
     embed_size = args.embed_size
-    batch_size = 16
-    num_epochs = 3
+    batch_size = 32
+    num_epochs = 1
     learning_rate = 1e-3
 
     block_size = args.block_size
@@ -727,10 +857,10 @@ def main():
     ).to(device)
 
     models = {
-      "kgram_mlp_seq": kgram_model,
-        "lstm_seq": lstm_model,
+      #"kgram_mlp_seq": kgram_model,
+       "lstm_seq": lstm_model,
       # "kvcache_transformer": kv_transformer,
-      "transformer": transformer,
+      #"transformer": transformer,
     }
 
 
