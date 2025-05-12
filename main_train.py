@@ -17,9 +17,10 @@ from functools import partial
 
 from datasets import load_dataset # Needed for TinyStories
 import tiktoken
+import seaborn as sns
 
 # --- Constants ---
-EARLY_STOP_THRESHOLD = 5.2 # The loss threshold for early stopping
+EARLY_STOP_THRESHOLD = 0 # The loss threshold for early stopping
 
 ################################################################################
 # 1. Command-line arg parsing (Adapted for Subset Training)
@@ -167,7 +168,7 @@ class mha(nn.Module):
         self.resid_dropout = nn.Dropout(dropout_rate)
         self.use_flash_attn = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
 
-    def forward(self, x, layer = 0, start_pos = 0, cache: Optional[KVCache] = None, mask = None):
+    def forward(self, x, layer = 0, start_pos = 0, cache: Optional[KVCache] = None, mask = None, attn_w=False):
         bsz, seq_len, _ = x.shape
         q = self.Wq(x); k = self.Wk(x); v = self.Wv(x)
         q = q.view(bsz, seq_len, self.n_heads, self.head_dim).transpose(1, 2)
@@ -177,6 +178,7 @@ class mha(nn.Module):
             cache.update(layer, k, v)
             k, v = cache.get(layer)
         q_len = q.shape[2]; kv_seq_len = k.shape[2]
+        
         if self.use_flash_attn:
             is_causal = mask is None and q_len > 1 and q_len == kv_seq_len
             attn_output = F.scaled_dot_product_attention(
@@ -192,6 +194,8 @@ class mha(nn.Module):
             attn_output = torch.matmul(attn, v)
         out = attn_output.transpose(1, 2).contiguous().view(bsz, q_len, self.dim)
         out = self.resid_dropout(self.out(out))
+        if attn_w:
+            return out, attn
         return out
 
 class FeedForward(nn.Module):
@@ -213,11 +217,16 @@ class Block(nn.Module):
         self.ffn = FeedForward(dim=dim, dropout_rate=dropout_rate)
         self.attn_norm = RMSNorm(dim)
         self.ffn_norm = RMSNorm(dim)
-    def forward(self, x, layer, cache = None, mask= None, start_pos = 0):
-        attn_out = self.attn(self.attn_norm(x), layer, start_pos, cache, mask)
+    def forward(self, x, layer, cache = None, mask= None, start_pos = 0, attn_w=False):
+        if attn_w:
+            attn_out, weights = self.attn(self.attn_norm(x), layer, start_pos, cache, mask, return_attn=True)
+        else:
+            attn_out = self.attn(self.attn_norm(x), layer, start_pos, cache, mask)
         h = x + attn_out
         ffn_out = self.ffn(self.ffn_norm(h))
         out = h + ffn_out
+        if attn_w:
+            return out, weights
         return out
 
 class TransformerModel(nn.Module): # Original KV Cache TransformerModel class
@@ -242,14 +251,20 @@ class TransformerModel(nn.Module): # Original KV Cache TransformerModel class
         elif isinstance(module, nn.Embedding):
             torch.nn.init.normal_(module.weight, mean=0.0, std=self.init_std)
 
-    def forward(self, tokens, cache = None, mask = None, start_pos = 0):
+    def forward(self, tokens, cache = None, mask = None, start_pos = 0, attn_w=False):
         # Input tokens: (seq_len, batch) from original loader
         tokens = tokens.transpose(0, 1) # Transpose to (batch, seq_len)
         bsz, seq_len = tokens.shape
         h = self.embedding(tokens)
         h = self.pos_encoding(h, start_pos=start_pos) # PE expects batch_first
+
+        attn_weights = []
         for layer, block in enumerate(self.blocks):
-            h = block(h, layer=layer, cache=cache, mask=mask, start_pos=start_pos) # Blocks expect batch_first
+            if attn_w:
+                h, weights = block(h, layer=layer, cache=cache, mask=mask, start_pos=start_pos, attn_w=True)
+                attn_weights.append(weights.cpu())
+            else:
+                h = block(h, layer=layer, cache=cache, mask=mask, start_pos=start_pos) # Blocks expect batch_first
         h = self.norm(h)
         logits = self.output(h) # (batch, seq_len, vocab_size)
         logits = logits.transpose(0, 1) # Transpose back to (seq_len, batch, vocab_size)
@@ -441,7 +456,22 @@ def train_one_model(model, train_loader, test_loader, epochs, model_name, device
 ################################################################################
 # 7. Loss Plotting (Restored Version for Early Stopping Marker)
 ################################################################################
-
+def plot_attn(weights, tokens, enc, model_name="TransformerKV"):
+    n = len(tokens)
+    words = [enc.decode([t]) for t in tokens]
+    for i, layer in enumerate(weights):
+        for j in range(layer.shape[1]):
+            plt.figure(figsize=(10,6))
+            sns.heatmap(layer[0, j, :n, :n].detach().numpy(), cmap="viridis", xticklabels=words, yticklabels=words, square=True, cbar=True)
+            plt.title(f"{model_name}, Layer: {i}, Head: {j}")
+            plt.xlabel("Key Tokens")
+            plt.ylabel("Query Tokens")
+            plt.xticks(rotation=90)
+            plt.tight_layout()
+            path = f"figs/{model_name}_layer{i}_head{j}.png"
+            plt.savefig(path)
+            plt.close()
+            
 def plot_losses(train_losses, test_losses, model_name):
     # --- No changes needed here ---
     if not train_losses and not any(not math.isnan(l) for l in test_losses): print("No loss data to plot."); return
@@ -598,6 +628,12 @@ def main():
     print("\n--- Final Generation Sample (Using model state at end of training/stopping) ---") # Clarify state
     final_text, _ = generate_text(model, enc, args.prompt, max_new_tokens=args.gen_max_new_tokens * 2, device=device, top_p=args.gen_top_p, temperature=args.gen_temperature)
     print(f"Prompt: '{args.prompt}'\nGenerated: {final_text}"); print("-" * 50)
+    print("\n--- Plotting Attention Heads ---")
+    prompt_tokens = enc.encode(args.prompt)
+    input_tens = torch.tensor(args.prompt, dtype=torch.long, device=device).unsqueeze(1)
+    with torch.no_grad():
+        logits, weights = model(input_tens, cache=None, mask=None, start_pos=0, attn_w=True)
+    plot_attn(weights=weights, tokens=prompt_tokens, enc=enc, model_name=model_name)
     print("\n*** Script Finished ***")
 
 if __name__ == "__main__":

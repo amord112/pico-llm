@@ -175,3 +175,5 @@ cython_debug/
 test.py
 run.bat
 output6.txt
+pico-llm_project_C copy.py
+test.txt
