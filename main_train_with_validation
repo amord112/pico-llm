@@ -1,1 +1,0 @@
-Added validation in main_train.py to make sure the model really learned something in stead of just outputting the data we provided
