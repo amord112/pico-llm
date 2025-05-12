@@ -1,0 +1,77 @@
+[TransformerKV_Subset_ES0.0_Val] Generating sample text @ Epoch 20...
+ Prompt: 'Once upon a time'
+ Sample: Once upon a time there was a shy bear. He was very clever and always wanted to do a problem. He wanted to know what he would buy something special.
+
+One day, he decided to sneak the local hill and see what was happening. He would not
+
+Training finished for TransformerKV_Subset_ES0.0_Val.
+
+--- Plotting Learning Curves ---
+Saved validation metrics plot to TransformerKV_Subset_ES0.0_Val_validation_metrics.png
+Saved step loss plot to TransformerKV_Subset_ES0.0_Val_step_loss_curve.png
+
+--- Loading and Evaluating Best Model ---
+Loaded best model from epoch 20 with validation metrics:
+  - Loss: 3.0897
+  - Perplexity: 21.97
+  - Accuracy: 0.4007
+
+======================================================================
+COMPARING MODELS FOR TransformerKV_Subset_ES0.0_Val
+======================================================================
+
+FINAL MODEL EVALUATION:
+
+--- Evaluating TransformerKV_Subset_ES0.0_Val_final on test set ---
+Test Loss: 3.0897
+Test Perplexity: 21.97
+Test Accuracy: 0.4007
+
+--- Generating 2 text samples ---
+
+Sample 1:
+Prompt: 'Once upon a time'
+Generated: Once upon a time there was a little girl named Alice. She was three years old and loved to go to the world. One day, her mom asked her to wash a new adventure, but she was obedient.
+
+Suddenly, Lucy's mom came to the park
+--------------------------------------------------
+
+Sample 2:
+Prompt: 'Once upon a time there'
+Generated: Once upon a time there was a small cat. The cat was very loyal and wanted to play. He went on a cozy spot to find something to make of metal like it was.
+
+He went out in the woods and opened. As he opened the park,
+--------------------------------------------------
+
+BEST MODEL EVALUATION:
+
+--- Evaluating TransformerKV_Subset_ES0.0_Val_best on test set ---
+Test Loss: 3.0897
+Test Perplexity: 21.97
+Test Accuracy: 0.4007
+
+--- Generating 2 text samples ---
+
+Sample 1:
+Prompt: 'Once upon a time'
+Generated: Once upon a time, there was a little boy named Timmy. Timmy loved to play in the park with his friends. One day, he saw a big cat and some leaves. Timmy wanted to play.
+
+Timmy said, "Timmy
+--------------------------------------------------
+
+Sample 2:
+Prompt: 'Once upon a time there'
+Generated: Once upon a time there was a young girl named Lily. She was only three years old and she liked to explore the world. One day, Lily wanted to go to the park with her mommy. She was so excited, she decided to go on a vacation.
+
+--------------------------------------------------
+
+MODEL COMPARISON:
+Metric          Final Model     Best Model      Difference
+------------------------------------------------------------
+Loss            3.0897          3.0897          0.0000          (Final is better)
+Perplexity      21.9696         21.9696         0.0000          (Final is better)
+Accuracy        0.4007          0.4007          0.0000          (Final is better)
+
+======================================================================
+
+*** Script Finished ***
