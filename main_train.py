@@ -19,7 +19,7 @@ from datasets import load_dataset # Needed for TinyStories
 import tiktoken
 
 # --- Constants ---
-EARLY_STOP_THRESHOLD = 5.2 # The loss threshold for early stopping
+EARLY_STOP_THRESHOLD = 0 # The loss threshold for early stopping
 
 ################################################################################
 # 1. Command-line arg parsing (Adapted for Subset Training)
@@ -40,8 +40,8 @@ def parse_args():
     parser.add_argument("--n_blocks", type=int, default=4, help="Number of transformer blocks. Default=4.") # Changed default
     parser.add_argument("--dropout_rate", type=float, default=0.2, help="Dropout rate. Default=0.1.") # Changed default
     # Training Args
-    parser.add_argument("--batch_size", type=int, default=128, help="Batch size per device. Default=16.") # Changed default
-    parser.add_argument("--num_epochs", type=int, default=4, help="Number of training epochs. Default=10.") # Increased epochs
+    parser.add_argument("--batch_size", type=int, default=32, help="Batch size per device. Default=16.") # Changed default
+    parser.add_argument("--num_epochs", type=int, default=20, help="Number of training epochs. Default=10.") # Increased epochs
     parser.add_argument("--learning_rate", type=float, default=1e-3, help="Learning rate (AdamW). Default=3e-4.") # Adjusted LR
     parser.add_argument("--weight_decay", type=float, default=0.01, help="Weight decay for AdamW. Default=0.01.") # Adjusted WD
     parser.add_argument("--log_steps", type=int, default=1, help="Log training loss every N steps. Default=20.") # Log more often
